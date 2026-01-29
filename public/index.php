@@ -1,29 +1,30 @@
 <?php
-// Enable CORS
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
 
-// Simple router
-$request = $_GET['action'] ?? 'index';
+define('LARAVEL_START', microtime(true));
 
-// Prevent directory traversal
-$request = preg_replace('/[^a-zA-Z0-9_-]/', '', $request);
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+*/
 
-switch ($request) {
-    case 'courses':
-        require __DIR__ . '/../api/courses.php';
-        break;
-    case 'slides':
-        require __DIR__ . '/../api/slides.php';
-        break;
-    case 'run':
-        require __DIR__ . '/../api/runner.php';
-        break;
-    default:
-        // Serve HTML
-        require __DIR__ . '/index.html';
-        break;
-}
+require __DIR__.'/../vendor/autoload.php';
+
+/*
+|--------------------------------------------------------------------------
+| Bootstrap Laravel And Handle The Request
+|--------------------------------------------------------------------------
+*/
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = \Illuminate\Http\Request::capture()
+);
+
+$response->send();
+
+$kernel->terminate($request, $response);
 ?>

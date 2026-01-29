@@ -246,7 +246,7 @@
         async function init() {
             try {
                 // Load courses
-                const coursesRes = await fetch('index.php?action=courses');
+                const coursesRes = await fetch('/api/courses');
                 coursesData = await coursesRes.json();
                 
                 // Load slides for first course
@@ -265,7 +265,7 @@
             currentSlideIndex = 0;
             
             try {
-                const slidesRes = await fetch(`index.php?action=slides&course=${courseId}`);
+                const slidesRes = await fetch(`/api/courses/${courseId}/slides`);
                 slidesData = await slidesRes.json();
                 renderSlides();
                 renderSlideNav();
@@ -405,7 +405,7 @@
             if (!editor) return;
 
             try {
-                const res = await fetch('index.php?action=run', {
+                const res = await fetch('/api/runner', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
