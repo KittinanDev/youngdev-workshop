@@ -1,0 +1,9 @@
+{
+  "name": "youngdev-workshop",
+  "version": "1.0.0",
+  "description": "Interactive PHP Workshop Platform - Slide Based Learning",
+  "main": "index.php",
+  "keywords": ["workshop", "slides", "php", "learning"],
+  "author": "YoungDev Team",
+  "license": "MIT"
+}

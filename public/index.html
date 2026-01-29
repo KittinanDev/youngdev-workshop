@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YoungDev Workshop - Learn to Code with Slides</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <style>
+        * {
+            font-family: 'Kanit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .slide-container {
+            perspective: 1000px;
+        }
+
+        .slide {
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #d4d4d4;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            transition: width 0.3s ease;
+        }
+
+        .hint-box {
+            background: linear-gradient(135deg, #fef08a 0%, #fef3c7 100%);
+            border-left: 4px solid #eab308;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .editor-container {
+            display: flex;
+            gap: 1rem;
+            height: 400px;
+            margin: 1rem 0;
+        }
+
+        .editor {
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor textarea {
+            flex: 1;
+            padding: 1rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            border: none;
+            resize: none;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .editor textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+
+        .output {
+            flex: 1;
+            background: #0f172a;
+            color: #10b981;
+            padding: 1rem;
+            overflow: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: #1f2937;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #a855f7;
+            color: #a855f7;
+        }
+
+        .success-badge {
+            background: #10b981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .error-badge {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100">
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">YD</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">YoungDev Workshop</h1>
+                        <p class="text-sm text-gray-600">Learn to Code with Slides</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-600">Slide <span id="currentSlide">1</span> / <span id="totalSlides">1</span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Slides Panel (Left) -->
+            <div class="lg:col-span-2">
+                <div class="slide-container" id="slideContainer">
+                    <!-- Slides will be loaded here by JS -->
+                </div>
+            </div>
+
+            <!-- Sidebar (Right) -->
+            <aside class="lg:col-span-1">
+                <!-- Course Navigation -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">📚 หลักสูตร</h2>
+                    <div id="courseNav" class="space-y-2">
+                        <!-- Courses will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Slide Navigation -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">📑 Slides</h2>
+                    <div id="slideNav" class="space-y-2 max-h-96 overflow-y-auto">
+                        <!-- Slide list will be loaded here -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Controls -->
+    <footer class="bg-white border-t border-gray-200 sticky bottom-0">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <button id="prevBtn" class="btn-secondary">← ก่อนหน้า</button>
+            <div class="flex gap-2">
+                <button id="resetBtn" class="btn-secondary">🔄 รีเซ็ต</button>
+                <button id="runBtn" class="btn-primary">▶️ รันโค้ด</button>
+                <button id="checkBtn" class="btn-primary">✓ ตรวจคำตอบ</button>
+            </div>
+            <button id="nextBtn" class="btn-secondary">ถัดไป →</button>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Global state
+        let currentCourse = 'javascript';
+        let currentSlideIndex = 0;
+        let coursesData = [];
+        let slidesData = [];
+
+        // Initialize
+        async function init() {
+            try {
+                // Load courses
+                const coursesRes = await fetch('index.php?action=courses');
+                coursesData = await coursesRes.json();
+                
+                // Load slides for first course
+                if (coursesData.length > 0) {
+                    await loadCourse(coursesData[0].id);
+                    renderCourseNav();
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+        }
+
+        // Load course slides
+        async function loadCourse(courseId) {
+            currentCourse = courseId;
+            currentSlideIndex = 0;
+            
+            try {
+                const slidesRes = await fetch(`index.php?action=slides&course=${courseId}`);
+                slidesData = await slidesRes.json();
+                renderSlides();
+                renderSlideNav();
+                updateProgress();
+            } catch (error) {
+                console.error('Error loading slides:', error);
+            }
+        }
+
+        // Render slides
+        function renderSlides() {
+            const container = document.getElementById('slideContainer');
+            container.innerHTML = '';
+
+            slidesData.forEach((slide, index) => {
+                const slideEl = document.createElement('div');
+                slideEl.className = `slide ${index === currentSlideIndex ? 'active' : ''} bg-white rounded-xl shadow-lg p-8 border border-gray-200`;
+                
+                slideEl.innerHTML = `
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-purple-600 font-bold">Step ${slide.step}</span>
+                            <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">${slide.difficulty}</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">${slide.title}</h2>
+                        <p class="text-gray-600">${slide.description}</p>
+                    </div>
+
+                    <div class="prose max-w-none mb-6">
+                        ${slide.content}
+                    </div>
+
+                    ${slide.code ? `
+                        <div class="code-block">
+                            <pre><code class="language-${slide.language || 'javascript'}">${escapeHtml(slide.code)}</code></pre>
+                        </div>
+                    ` : ''}
+
+                    ${slide.task ? `
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                            <h3 class="font-bold text-blue-900 mb-2">🎯 โจทย์:</h3>
+                            <p class="text-blue-800">${slide.task}</p>
+                        </div>
+                    ` : ''}
+
+                    ${slide.hasEditor ? `
+                        <div class="editor-container">
+                            <div class="editor">
+                                <div class="bg-gray-800 px-4 py-2 text-white text-sm font-medium flex items-center justify-between">
+                                    <span>📝 Code Editor</span>
+                                    <span class="text-xs bg-purple-600 px-2 py-1 rounded">${slide.language}</span>
+                                </div>
+                                <textarea id="codeEditor" placeholder="เขียนโค้ดตรงนี้...">${slide.starterCode || ''}</textarea>
+                            </div>
+                            <div class="output" id="output">
+                                <div class="text-gray-400">ผลลัพธ์จะแสดงตรงนี้</div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${slide.hints ? `
+                        <details class="hint-box cursor-pointer">
+                            <summary class="font-bold text-yellow-900">💡 ดูคำใบ้</summary>
+                            <div class="mt-3 text-yellow-900">${slide.hints}</div>
+                        </details>
+                    ` : ''}
+                `;
+
+                container.appendChild(slideEl);
+            });
+
+            // Highlight code
+            document.querySelectorAll('pre code').forEach(el => {
+                hljs.highlightElement(el);
+            });
+
+            updateProgress();
+        }
+
+        // Render course navigation
+        function renderCourseNav() {
+            const nav = document.getElementById('courseNav');
+            nav.innerHTML = coursesData.map(course => `
+                <button 
+                    onclick="loadCourse('${course.id}')"
+                    class="w-full text-left px-4 py-2 rounded-lg transition ${
+                        currentCourse === course.id 
+                            ? 'bg-purple-100 text-purple-700 font-bold border-2 border-purple-600' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                    }"
+                >
+                    ${course.icon} ${course.title}
+                </button>
+            `).join('');
+        }
+
+        // Render slide navigation
+        function renderSlideNav() {
+            const nav = document.getElementById('slideNav');
+            nav.innerHTML = slidesData.map((slide, index) => `
+                <button 
+                    onclick="goToSlide(${index})"
+                    class="w-full text-left px-3 py-2 text-sm rounded-lg transition ${
+                        index === currentSlideIndex 
+                            ? 'bg-purple-100 text-purple-700 font-bold' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                    }"
+                >
+                    ${index + 1}. ${slide.title}
+                </button>
+            `).join('');
+        }
+
+        // Navigation functions
+        function goToSlide(index) {
+            if (index >= 0 && index < slidesData.length) {
+                currentSlideIndex = index;
+                renderSlides();
+                renderSlideNav();
+                updateProgress();
+            }
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlideIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlideIndex - 1);
+        }
+
+        // Run code
+        async function runCode() {
+            const editor = document.getElementById('codeEditor');
+            const output = document.getElementById('output');
+            
+            if (!editor) return;
+
+            try {
+                const res = await fetch('index.php?action=run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: editor.value,
+                        language: slidesData[currentSlideIndex].language
+                    })
+                });
+
+                const result = await res.json();
+                output.textContent = result.output || result.error;
+                if (result.error) output.style.color = '#ef4444';
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                output.style.color = '#ef4444';
+            }
+        }
+
+        // Check answer
+        function checkAnswer() {
+            const slide = slidesData[currentSlideIndex];
+            const editor = document.getElementById('codeEditor');
+            
+            if (!editor || !slide.tests) return;
+
+            const code = editor.value;
+            const results = slide.tests.map(test => ({
+                ...test,
+                passed: test.check(code)
+            }));
+
+            const allPassed = results.every(r => r.passed);
+            alert(allPassed ? '🎉 ผ่านแล้ว!' : '❌ ยังไม่ถูกต้อง');
+        }
+
+        // Reset code
+        function resetCode() {
+            const editor = document.getElementById('codeEditor');
+            if (editor) {
+                editor.value = slidesData[currentSlideIndex].starterCode || '';
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
+            document.getElementById('totalSlides').textContent = slidesData.length;
+            
+            const progress = (currentSlideIndex + 1) / slidesData.length * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Event listeners
+        document.getElementById('nextBtn').onclick = nextSlide;
+        document.getElementById('prevBtn').onclick = prevSlide;
+        document.getElementById('runBtn').onclick = runCode;
+        document.getElementById('checkBtn').onclick = checkAnswer;
+        document.getElementById('resetBtn').onclick = resetCode;
+
+        // Start
+        init();
+
+        // Helper function
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
